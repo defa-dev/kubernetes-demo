@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-configmap
+data:
+  BACKEND_HOST: backend-svc
+  BACKEND_PORT: "30000" 

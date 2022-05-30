@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+spec:
+  template:
+    metadata:
+      name: frontend
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend-container
+          image: acrteststack.azurecr.io/stack/test/frontend:1
+          ports:
+            - containerPort: 3000
+          envFrom:
+            - configMapRef:
+                name: frontend-configmap
+          # livenessProbe:
+          #   httpGet:
+          #     path: /api/hello
+          #     port: 3000
+          #   periodSeconds: 10
+          #   failureThreshold: 3
+          #   initialDelaySeconds: 20
+          # readinessProbe:
+          #   httpGet:
+          #     path: /api/hello
+          #     port: 3000
+          #   periodSeconds: 10
+          #   failureThreshold: 5
+          #   initialDelaySeconds: 3
+          # resources:
+          #   requests:
+          #     cpu: 10m
+      imagePullSecrets:
+        - name: stack.registry.secret
+  replicas: 3
+  selector:
+    matchLabels:
+      app: frontend

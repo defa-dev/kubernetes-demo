@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+spec:
+  template:
+    metadata:
+      name: backend
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend-container
+          image: acrteststack.azurecr.io/stack/test/backend:1
+          ports:
+            - containerPort: 30000
+          envFrom:
+            - configMapRef:
+                name: backend-configmap
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 30000
+            periodSeconds: 10
+            failureThreshold: 3
+            initialDelaySeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 30000
+            periodSeconds: 10
+            failureThreshold: 5
+            initialDelaySeconds: 3
+          resources:
+            requests:
+              cpu: 10m
+      imagePullSecrets:
+        - name: stack.registry.secret
+  replicas: 3
+  selector:
+    matchLabels:
+      app: backend
